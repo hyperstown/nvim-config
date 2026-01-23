@@ -118,7 +118,12 @@ return {
           diagnostic = {
             mode = "icon", -- icon|sign 
           }
-        }
+        },
+        copilot_filetypes = {
+          env = false,
+          sh = false,
+          json = false,
+        },
         -- NOTE: `mapleader` and `maplocalleader` must be set in the AstroNvim opts or before `lazy.setup`
         -- This can be found in the `lua/lazy_setup.lua` file
       },
