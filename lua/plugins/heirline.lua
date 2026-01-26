@@ -45,6 +45,40 @@ return {
       return require("astroui.status.utils").stylize(text, opts)
     end
 
+    local git_ahead_behind = {
+      condition = function()
+        return require("astroui.status.condition").is_git_repo()
+      end,
+      init = function(self)
+        self.status = vim.g.git_changes or {"0", "0"}
+        self.ahead = self.status[1]
+        self.behind = self.status[2]
+      end,
+      provider = function(self)
+        return string.format(" %d %d", self.behind, self.ahead)
+      end,
+      padding = { left = 1, right = 1 },
+      hl = { fg = "fg" },
+      on_click = {
+        callback = function()
+          vim.system({ "git", "pull", "--rebase" }, {}, function(res)
+            if res.code ~= 0 then
+              local msg = vim.trim(res.stderr ~= "" and res.stderr or res.stdout)
+              vim.schedule(function()
+                vim.notify(
+                  "Git pull failed:\n" .. msg,
+                  vim.log.levels.ERROR,
+                  { title = "Git Sync" }
+                )
+              end)
+              return
+            end
+            vim.system({ "git", "push" })
+          end)
+        end,
+        name = "git_sync",
+      }
+    }
 
     opts.statusline = {
       hl = { fg = "fg", bg = "bg" },
@@ -75,6 +109,7 @@ return {
 
       status.component.git_branch(),
       status.component.git_diff(),
+      git_ahead_behind,
       status.component.diagnostics(),
       status.component.fill(),
       status.component.cmd_info(),
