@@ -14,7 +14,7 @@ return {
       }
     }
 
-    opts.debounce = 500
+    opts.debounce = 750
 
     opts.sources = vim.list_extend(opts.sources or {}, {
       cspell.diagnostics.with({
