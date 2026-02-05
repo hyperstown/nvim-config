@@ -6,9 +6,7 @@
 -- Patch close tab as it throws an error when closing CodeDiff tab
 local buff_module = require("astrocore.buffer")
 local original_close_tab = buff_module.close_tab
-buff_module.close_tab = function(tabpage)
-  pcall(original_close_tab, tabpage)
-end
+buff_module.close_tab = function(tabpage) pcall(original_close_tab, tabpage) end
 
 ---@type LazySpec
 return {
@@ -24,9 +22,7 @@ return {
           desc = "Open Neo-tree after restoring a session",
           callback = function()
             vim.notify("Restored!")
-            vim.schedule(function()
-              vim.cmd("Neotree filesystem reveal left")
-            end)
+            vim.schedule(function() vim.cmd("Neotree filesystem reveal left") end)
           end,
         },
       },
@@ -65,13 +61,11 @@ return {
           pattern = "*.py",
           -- If I don't do this new buffer don't find venvs? Idk why this happens..
           desc = "Restart LSP to detect venv for every buffer",
-          callback = function (event)
-            vim.schedule(function ()
-              vim.cmd("LspRestart")
-            end)
-          end
-        }
-      }
+          callback = function(event)
+            vim.schedule(function() vim.cmd("LspRestart") end)
+          end,
+        },
+      },
     },
     -- Configure core features of AstroNvim
     features = {
@@ -113,11 +107,11 @@ return {
         -- configure global vim variables (vim.g)
         neominimap = {
           click = {
-            enabled = true
+            enabled = true,
           },
           diagnostic = {
-            mode = "icon", -- icon|sign 
-          }
+            mode = "icon", -- icon|sign
+          },
         },
         copilot_filetypes = {
           env = false,
@@ -134,60 +128,43 @@ return {
       -- first key is the mode
       v = {
         ["<Leader>t"] = { "<cmd>TextCaseOpenTelescope<CR>", desc = "Text transform" },
-        ["<Leader>f"] = { 
-          function() 
-            require('grug-far').open({ 
-              prefills = { paths = vim.fn.expand("%:."), search = vim.fn.expand("<cword>") } 
-            })
+        ["<Leader>f"] = {
+          function()
+            require("grug-far").open({ prefills = { paths = vim.fn.expand("%:."), search = vim.fn.expand("<cword>") } })
           end,
-          desc = "Find in current file" 
-        }
+          desc = "Find in current file",
+        },
       },
       i = {
         ["<A-Down>"] = { "<cmd>m .+1<cr>", desc = "Move line down" },
         ["<A-Up>"] = { "<cmd>m .-2<cr>", desc = "Move line up" },
+        ["<C-s>"] = { "<cmd>w<cr>", desc = "Save" },
       },
       t = {
-        ["jkk"] = { "<C-\\><C-n>", desc = "Better esc in terminal" }
+        ["jkk"] = { "<C-\\><C-n>", desc = "Better esc in terminal" },
+        ["<Leader><Esc>"] = { "<C-\\><C-n>", desc = "Better esc in terminal" },
       },
       n = {
         -- navigate buffer tabs
         ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
-        ["<Leader><Tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
-        ["<C-Tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
         ["<A-Down>"] = { "<cmd>m .+1<cr>", desc = "Move line down" },
         ["<A-Up>"] = { "<cmd>m .-2<cr>", desc = "Move line up" },
         ["<A-j>"] = { "<cmd>m .+1<cr>", desc = "Move line down" },
         ["<A-k>"] = { "<cmd>m .-2<cr>", desc = "Move line up" },
-        ["<Leader>lm"] = { "<cmd>Markview splitToggle<CR>", desc = "Toggle Markdown Preview" },
-        ["<Leader>gD"] = { "<cmd>CodeDiff<CR><cmd>Neominimap TabDisable<CR>", desc = "View Code Git diff" },
-        ["<Leader>gB"] = {
+        ["<C-a>"] = { "ggVG", desc = "Select all" },
+        ["<C-s>"] = { "<cmd>w<cr>", desc = "Save" },
+        ["<Leader>gD"] = {
           function()
-              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                if vim.bo[buf].filetype == "gitsigns-blame" then
-                  vim.api.nvim_buf_delete(buf, {})
-                  return
-                end
-              end
-              require("gitsigns").blame()
-            end,
-          desc = "Toggle Git diff"
-        },
-        -- mappings seen under group name "Buffer"
-        ["<Leader>bd"] = {
-          function()
-            require("astroui.status.heirline").buffer_picker(
-              function(bufnr) require("astrocore.buffer").close(bufnr) end
-            )
+            vim.cmd("CodeDiff")
+            vim.defer_fn(function() vim.cmd("Neominimap TabDisable") end, 500)
           end,
-          desc = "Close buffer from tabline",
+          desc = "View Code Git diff",
         },
-
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
-         ["<Leader>t"] = { desc = " Terminal" },
+        ["<Leader>t"] = { desc = " Terminal" },
+        ["<Leader>z"] = { desc = " Colors" },
 
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
