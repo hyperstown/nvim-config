@@ -1,29 +1,11 @@
 return {
   "nvimtools/none-ls.nvim",
+  keys = { { "<leader>la", vim.lsp.buf.code_action, desc = "Code action" } },
   opts = function(_, opts)
-    local cspell = require "cspell"
-
-    local cspell_config = {
-      config_file_preferred_name = "cspell.json",  -- Name for new configs created by code actions
-      cspell_config_dirs = {
-        vim.fn.stdpath("config"),  -- Global dir (e.g., ~/.config/nvim)
-        vim.loop.cwd(),            -- Project dir (current working directory)
-        vim.loop.cwd() .. "/.vscode",            -- Another popular dir
-        vim.loop.cwd() .. "/.config",            -- Another popular dir
-        vim.loop.cwd() .. "/.nvim",            -- Another popular dir
-      }
-    }
-
-    opts.debounce = 750
-
-    opts.sources = vim.list_extend(opts.sources or {}, {
-      cspell.diagnostics.with({
-        config = cspell_config,
-        diagnostics_postprocess = function(diagnostic)
-          diagnostic.severity = vim.diagnostic.severity.HINT
-        end
-      }),
-      cspell.code_actions.with({ config = cspell_config }),
+    -- hmm this is not really none-ls but it's lsp config and and astrolsp doesn't work
+    vim.lsp.config("codebook", {
+      cmd = { "codebook-lsp", "serve" },
     })
+    vim.lsp.enable("codebook")
   end,
 }
