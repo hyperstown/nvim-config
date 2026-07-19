@@ -13,11 +13,15 @@ return {
         local venv = vim.env.VIRTUAL_ENV
         local version_str = ""
         if venv or (opts.conda and opts.conda.enabled and conda) then
-          python = require("venv-selector").python()
-          local result = vim.system(
-            { python, "-c", "import sys; print('.'.join(map(str, sys.version_info[:3])))" }, { text = true }
-          ):wait()
-          if result.code == 0 and result.stdout ~= "" then version_str = vim.trim(result.stdout) end
+          local python = require("venv-selector").python()
+            or (venv and venv .. "/bin/python")
+            or vim.fn.exepath("python")
+          if python and python ~= "" and vim.fn.executable(python) == 1 then
+            local result = vim.system(
+              { python, "-c", "import sys; print('.'.join(map(str, sys.version_info[:3])))" }, { text = true }
+            ):wait()
+            if result.code == 0 and result.stdout ~= "" then version_str = vim.trim(result.stdout) end
+          end
         end
         local venv_type = (venv and "venv") or (opts.conda and opts.conda.enabled and conda and "conda")
         local name = original_virtual_env(opts)()

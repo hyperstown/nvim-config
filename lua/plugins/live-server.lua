@@ -1,10 +1,14 @@
 return {
-  "hyperstown/nvim-live-server",
-  cmd = { "LiveServerStart", "LiveServerStop", "LiveServerToggle"},
+  dir = "~/dev/nvim-live-server",
+  cmd = { "LiveServerStart", "LiveServerStop", "LiveServerToggle" },
   lazy = false,
   opts = {
     host = "127.0.0.1",
     port = 5550,
     conn_attempts = 3,
+    open_browser = false,
+    ignore_files = {
+      "*.env",
+    },
   },
 }
