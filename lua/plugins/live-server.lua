@@ -1,5 +1,5 @@
 return {
-  dir = "~/dev/nvim-live-server",
+  dir = "~/Projects/nvim-live-server",
   cmd = { "LiveServerStart", "LiveServerStop", "LiveServerToggle" },
   lazy = false,
   opts = {

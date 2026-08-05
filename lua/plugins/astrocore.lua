@@ -62,7 +62,9 @@ return {
           -- If I don't do this new buffer don't find venvs? Idk why this happens..
           desc = "Restart LSP to detect venv for every buffer",
           callback = function(event)
-            vim.schedule(function() vim.cmd("LspRestart") end)
+            -- :LspRestart was removed with nvim-lspconfig on nvim 0.12; :lsp restart
+            -- only acts on the current buffer and errors when no client is attached
+            vim.schedule(function() pcall(vim.cmd, "lsp restart") end)
           end,
         },
       },
